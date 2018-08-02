@@ -138,6 +138,20 @@ yield_scraper <- function(){
     plot_dim <- readline(prompt = 'Only enter "3D" or "2D": ')
   }
   
+  plot_title <- ""
+  if (current_month){
+    plot_title <- paste(format(Sys.Date(), format="%B %Y"), "Treasury Yields \nas of", format(max(yields$Date), format="%B %d"))
+  }
+  if (start_year == year(Sys.Date())){
+    plot_title <- paste(years,"Treasury Yields \nas of", format(max(yields$Date), format="%B %d"))
+  }
+  if (start_year == end_year & !(start_year == year(Sys.Date()))){
+    plot_title <- paste(years,"Treasury Yields")
+  }
+  else{
+    plot_title <- paste(start_year,"-",end_year,"Treasury Yields")
+  }
+  
   # 2D plot
   if (plot_dim == "2D"){
 
@@ -146,12 +160,7 @@ yield_scraper <- function(){
          col = "white", 
          xlab = "Date", 
          ylab = "Yield", 
-         main = ifelse(current_month, 
-                       paste(format(Sys.Date(), format="%B %Y"), "Treasury Yields \nas of", format(max(yields$Date), format="%B %d")),
-                       paste(ifelse(length(years)>1,
-                                    paste0(min(years),"-",max(years)),
-                                    years), 
-                             "Treasury Yields \nas of", format(max(yields$Date), format="%B %d")))
+         main = plot_title
     )
   
     # set colors
@@ -168,9 +177,9 @@ yield_scraper <- function(){
            ncol = 3, 
            legend = rev(names(yields)[2:ncol(yields)]), 
            col = rev(color_list), 
-          lty = 1, 
-          cex = .65, 
-          lwd = 2)
+           lty = 1, 
+           cex = .65, 
+           lwd = 2)
     } else {
   
     # 3D Plot
@@ -178,7 +187,19 @@ yield_scraper <- function(){
     y = names(yields)[2:ncol(yields)]
     z = t(data.matrix(yields[,2:ncol(yields)]))
   
-    plot_ly(x = x, y = y, z = z, type = "surface")
+    plot_ly(x = x, y = y, z = z, type = "surface") %>% 
+      layout(title = plot_title,
+             scene = list(xaxis = list(title = 'Date', 
+                                       titlefont = list(size = 10),
+                                       tickfont = list(size = 10)),
+                          yaxis = list(title = 'Maturity', 
+                                       titlefont = list(size = 10),
+                                       tickfont = list(size = 10)),
+                          zaxis = list(title = 'Yield (%)', 
+                                       titlefont = list(size = 10),
+                                       tickfont = list(size = 10))
+                          )
+      )
     }
 }
 
