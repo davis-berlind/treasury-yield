@@ -1,10 +1,17 @@
-library('rvest')
+library(rvest)
+library(plotly)
 
 # Set year
 year <- 2018
 
+# Current month only?
+current_month <- FALSE
+
 # create URL to US Treasury website
-url <- paste0("https://www.treasury.gov/resource-center/data-chart-center/interest-rates/Pages/TextView.aspx?data=yieldYear&year=",year)
+url <- ifelse(current_month,
+              "https://www.treasury.gov/resource-center/data-chart-center/interest-rates/Pages/TextView.aspx?data=yield",
+              paste0("https://www.treasury.gov/resource-center/data-chart-center/interest-rates/Pages/TextView.aspx?data=yieldYear&year=",year)
+              )
 
 # read HTML code
 download.file(url, destfile = "scrapedpage.html", quiet=TRUE)
@@ -42,9 +49,17 @@ minmax[1,2] <- min(yields[,2:ncol(yields)])
 minmax[2,1] <- max(yields$Date)
 minmax[2,2] <- max(yields[,2:ncol(yields)])
 
+#### 2D Plot ####
+
 # initialize plot
-plot(minmax$date,minmax$rate, col = "white", xlab = "Date", ylab = "Yield", 
-     main = paste(year, "Treasury Yields \nas of", format(max(yields$Date), format="%B %d")))
+plot(minmax$date,minmax$rate, 
+     col = "white", 
+     xlab = "Date", 
+     ylab = "Yield", 
+     main = ifelse(current_month, 
+                   paste(format(Sys.Date(), format="%B %Y"), "Treasury Yields \nas of", format(max(yields$Date), format="%B %d")),
+                   paste(year, "Treasury Yields \nas of", format(max(yields$Date), format="%B %d")))
+    )
 
 # set colors
 color_list <- terrain.colors(ncol(yields)-1)
@@ -55,4 +70,18 @@ for (i in 2:ncol(yields)){
   lines(yields$Date,yields[,i], col = color_list[i-1], lwd = 2)
 }
 
-legend("bottomright", inset = 0.01, ncol = 2, legend = rev(names(yields)[2:ncol(yields)]), col = rev(color_list), lty = 1, cex = .65, lwd = 2)
+legend(ifelse(current_month,"center","bottomright"), 
+       inset = 0.01, 
+       ncol = 3, 
+       legend = rev(names(yields)[2:ncol(yields)]), 
+       col = rev(color_list), 
+       lty = 1, 
+       cex = .65, 
+       lwd = 2)
+
+#### 3D Plot ####
+x = yields$Date
+y = names(yields)[2:ncol(yields)]
+z = t(data.matrix(yields[,2:ncol(yields)]))
+
+plot_ly(x = x, y = y, z = z, type = "surface")
