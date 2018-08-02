@@ -4,7 +4,7 @@ library(lubridate)
 
 rm(list = ls())
 
-yields_scraper <- function(){
+yield_scraper <- function(){
   
   # current month only?
   current_month <- ifelse(readline(prompt = "Current month only? (y/n): ") == "y", TRUE, FALSE)
@@ -174,3 +174,5 @@ yields_scraper <- function(){
     plot_ly(x = x, y = y, z = z, type = "surface")
     }
 }
+
+yield_scraper()
