@@ -9,7 +9,7 @@ yield_scraper <- function(){
   # current month only?
   current_month <- ifelse(readline(prompt = "Current month only? (y/n): ") == "y", TRUE, FALSE)
   
-  if (current_month != "y" | current_month != "n"){
+  if (current_month != "y" & current_month != "n"){
     current_month <- ifelse(readline(prompt = 'please only enter "y" or "n": ') == "y", TRUE, FALSE)
   }
   
