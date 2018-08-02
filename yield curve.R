@@ -1,37 +1,91 @@
 library(rvest)
 library(plotly)
 
-# Set year
-year <- 2018
-
-# Current month only?
+# current month only?
 current_month <- FALSE
 
-# create URL to US Treasury website
-url <- ifelse(current_month,
-              "https://www.treasury.gov/resource-center/data-chart-center/interest-rates/Pages/TextView.aspx?data=yield",
-              paste0("https://www.treasury.gov/resource-center/data-chart-center/interest-rates/Pages/TextView.aspx?data=yieldYear&year=",year)
-              )
+# set year
+years <- seq(2017,2018)
 
-# read HTML code
-download.file(url, destfile = "scrapedpage.html", quiet=TRUE)
-content <- read_html("scrapedpage.html")
-
-# scrape yield data
-yield_data_html <- html_nodes(content,'th , .text_view_data')
-
-# convert to text
-yield_data <- html_text(yield_data_html)
-
-# initialize df of dates and yields
-yields <- data.frame(matrix(nrow = 0, ncol = 12))
-names(yields) <- yield_data[1:12]
-
-# fill df with data
-rows <- length(yield_data[13:length(yield_data)])/12
-
-for (i in 1:rows){
-  yields[i,] <- yield_data[(12*i)+1:(12*(i+1))]
+# create URL to US Treasury website for current month if current month is set to TRUE
+if (current_month) {
+  url <- "https://www.treasury.gov/resource-center/data-chart-center/interest-rates/Pages/TextView.aspx?data=yield"
+  
+  # read HTML code
+  download.file(url, destfile = "scrapedpage.html", quiet=TRUE)
+  content <- read_html("scrapedpage.html")
+  
+  # scrape yield data
+  yield_data_html <- html_nodes(content,'.text_view_data')
+  
+  # convert to text
+  yield_data <- html_text(yield_data_html)
+  
+  # initialize df of dates and yields
+  yields <- data.frame(matrix(nrow = 0, ncol = 12))
+  
+  # creating names for yields df
+  maturities_html <- html_nodes(content,'th')
+  maturities <- html_text(maturities_html)
+  names(yields) <- maturities
+  
+  # calculate number of rows for yields df
+  rows <- length(yield_data)/12
+  
+  # fill yields df with data (with bug fix for first day of the month)
+  if (rows > 1){
+    for (i in 0:rows-1){
+      yields[i+1,] <- yield_data[(12*i)+1:(12*(i+1))]
+    } 
+  } else {
+    yields[1,] <- yield_data
+  }  
+} else {
+  
+  # initialize yields df
+  yields <- data.frame(matrix(nrow = 0, ncol = 12))
+  
+   # scrape names names for yields df
+  url <- paste0("https://www.treasury.gov/resource-center/data-chart-center/interest-rates/Pages/TextView.aspx?data=yieldYear&year=",years[1])
+  download.file(url, destfile = "scrapedpage.html", quiet=TRUE)
+  content <- read_html("scrapedpage.html")
+  maturities_html <- html_nodes(content,'th')
+  maturities <- html_text(maturities_html)
+  names(yields) <- maturities
+  
+  # scrape yield data for each year in "years"
+  for (i in seq_along(years)){
+    
+    # create URL to US Treasury website
+    url <- paste0("https://www.treasury.gov/resource-center/data-chart-center/interest-rates/Pages/TextView.aspx?data=yieldYear&year=",years[i])
+    
+    # read HTML code
+    download.file(url, destfile = "scrapedpage.html", quiet=TRUE)
+    content <- read_html("scrapedpage.html")
+    
+    # scrape yield data
+    yield_data_html <- html_nodes(content,'.text_view_data')
+    
+    # convert to text
+    yield_data <- html_text(yield_data_html)
+    
+    # save yields and dates to df for year i in years
+    yields_temp <- data.frame(matrix(nrow = 0, ncol = 12))
+    
+    # calculate number of rows for year i yields df
+    rows <- length(yield_data)/12
+    
+    # fill year i yields df with data
+    for (j in 0:(rows-1)){
+      yields_temp[j+1,] <- yield_data[(12*j)+1:(12*(j+1))]
+      } 
+    
+    # rename year i yields df
+    names(yields_temp) <- maturities
+    
+    # save year i yields data to master yields df
+    yields <- rbind(yields, yields_temp)
+  }
 }
 
 # convert text to dates
@@ -44,10 +98,10 @@ yields[,2:ncol(yields)] <- apply(yields[,2:ncol(yields)],2,as.numeric)
 minmax <- data.frame(matrix(ncol = 2))
 names(minmax) <- c("date", "rate")
 minmax$date <- as.Date(minmax$date)
-minmax[1,1] <- min(yields$Date)
-minmax[1,2] <- min(yields[,2:ncol(yields)])
-minmax[2,1] <- max(yields$Date)
-minmax[2,2] <- max(yields[,2:ncol(yields)])
+minmax[1,1] <- min(yields$Date, na.rm = TRUE)
+minmax[1,2] <- min(yields[,2:ncol(yields)], na.rm = TRUE)
+minmax[2,1] <- max(yields$Date, na.rm = TRUE)
+minmax[2,2] <- max(yields[,2:ncol(yields)], na.rm = TRUE)
 
 #### 2D Plot ####
 
