@@ -7,27 +7,29 @@ rm(list = ls())
 yield_scraper <- function(){
   
   # current month only?
-  current_month <- ifelse(readline(prompt = "Current month only? (y/n): ") == "y", TRUE, FALSE)
+  current_month <- readline(prompt = "Current month only? (y/n): ")
   
   if (current_month != "y" & current_month != "n"){
     current_month <- ifelse(readline(prompt = 'please only enter "y" or "n": ') == "y", TRUE, FALSE)
   }
   
+  current_month <- ifelse(current_month == "y", TRUE, FALSE)
+
   # set year
   if(current_month){
     break
     } else {
-      start_year <- readline(prompt = paste0("Enter a start year between 1990 and ", year(Sys.Date()), ": "))
+      start_year <- as.numeric(readline(prompt = paste0("Enter a start year between 1990 and ", year(Sys.Date()), ": ")))
       
-      if (!is.numeric(start_year) | start_year < 1990 | start_year > year(Sys.Date())){
-        start_year <- readline(prompt = paste0("only enter years between 1990 and ", year(Sys.Date()), ": "))
-      }
+      if (is.na(start_year) | start_year < 1990 | start_year > year(Sys.Date())){
+        start_year <- as.numeric(readline(prompt = paste0("Only enter years between 1990 and ", year(Sys.Date()), ": ")))
+      } 
       
-      end_year <- readline(prompt = paste0("Enter a end year between ", start_year, " and ", format(Sys.Date(), format = "%Y"), ": "))
+      end_year <- as.numeric(readline(prompt = paste0("Enter an end year between ", start_year, " and ", format(Sys.Date(), format = "%Y"), ": ")))
       
-      if (!is.numeric(end_year) | end_year < start_year | start_year > year(Sys.Date())){
-        end_year <- readline(prompt = paste0("Only enter years between ", start_year, " and ", format(Sys.Date(), format = "%Y"), ": "))
-      }
+      if (is.na(end_year) | end_year < start_year | end_year > year(Sys.Date())){
+        end_year <- as.numeric(readline(prompt = paste0("Only enter years between ", start_year, " and ", format(Sys.Date(), format = "%Y"), ": ")))
+      } 
       
       years <- seq(start_year, end_year)
   }
@@ -130,6 +132,11 @@ yield_scraper <- function(){
   
   # choose plot dimensions
   plot_dim <- readline(prompt = "3D or 2D Plot? (enter 3D or 2D): ")
+  plot_dim <- toupper(plot_dim)
+  
+  if (plot_dim != "3D" & plot_dim != "2D"){
+    plot_dim <- readline(prompt = 'Only enter "3D" or "2D": ')
+  }
   
   # 2D plot
   if (plot_dim == "2D"){
@@ -139,7 +146,7 @@ yield_scraper <- function(){
          col = "white", 
          xlab = "Date", 
          ylab = "Yield", 
-        main = ifelse(current_month, 
+         main = ifelse(current_month, 
                        paste(format(Sys.Date(), format="%B %Y"), "Treasury Yields \nas of", format(max(yields$Date), format="%B %d")),
                        paste(ifelse(length(years)>1,
                                     paste0(min(years),"-",max(years)),
@@ -166,7 +173,7 @@ yield_scraper <- function(){
           lwd = 2)
     } else {
   
-    #### 3D Plot ####
+    # 3D Plot
     x = yields$Date
     y = names(yields)[2:ncol(yields)]
     z = t(data.matrix(yields[,2:ncol(yields)]))
