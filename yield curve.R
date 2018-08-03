@@ -139,17 +139,20 @@ yield_scraper <- function(){
   }
   
   plot_title <- ""
+  
   if (current_month){
     plot_title <- paste(format(Sys.Date(), format="%B %Y"), "Treasury Yields \nas of", format(max(yields$Date), format="%B %d"))
-  }
-  if (start_year == year(Sys.Date())){
-    plot_title <- paste(years,"Treasury Yields \nas of", format(max(yields$Date), format="%B %d"))
-  }
-  if (start_year == end_year & !(start_year == year(Sys.Date()))){
-    plot_title <- paste(years,"Treasury Yields")
-  }
-  else{
+  } else {
+    
     plot_title <- paste(start_year,"-",end_year,"Treasury Yields")
+    
+    if (start_year == year(Sys.Date())){
+      plot_title <- paste(years,"Treasury Yields \nas of", format(max(yields$Date), format="%B %d"))
+    }
+    
+    if (start_year == end_year & !(start_year == year(Sys.Date()))){
+      plot_title <- paste(years,"Treasury Yields")
+    }
   }
   
   # 2D plot
