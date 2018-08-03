@@ -16,22 +16,21 @@ yield_scraper <- function(){
   current_month <- ifelse(current_month == "y", TRUE, FALSE)
 
   # set year
-  if(current_month){
-    break
-    } else {
-      start_year <- as.numeric(readline(prompt = paste0("Enter a start year between 1990 and ", year(Sys.Date()), ": ")))
+  if(!current_month){
+    
+    start_year <- as.numeric(readline(prompt = paste0("Enter a start year between 1990 and ", year(Sys.Date()), ": ")))
       
-      if (is.na(start_year) | start_year < 1990 | start_year > year(Sys.Date())){
-        start_year <- as.numeric(readline(prompt = paste0("Only enter years between 1990 and ", year(Sys.Date()), ": ")))
+    if (is.na(start_year) | start_year < 1990 | start_year > year(Sys.Date())){
+      start_year <- as.numeric(readline(prompt = paste0("Only enter years between 1990 and ", year(Sys.Date()), ": ")))
       } 
       
-      end_year <- as.numeric(readline(prompt = paste0("Enter an end year between ", start_year, " and ", format(Sys.Date(), format = "%Y"), ": ")))
+    end_year <- as.numeric(readline(prompt = paste0("Enter an end year between ", start_year, " and ", format(Sys.Date(), format = "%Y"), ": ")))
       
-      if (is.na(end_year) | end_year < start_year | end_year > year(Sys.Date())){
-        end_year <- as.numeric(readline(prompt = paste0("Only enter years between ", start_year, " and ", format(Sys.Date(), format = "%Y"), ": ")))
+    if (is.na(end_year) | end_year < start_year | end_year > year(Sys.Date())){
+      end_year <- as.numeric(readline(prompt = paste0("Only enter years between ", start_year, " and ", format(Sys.Date(), format = "%Y"), ": ")))
       } 
       
-      years <- seq(start_year, end_year)
+    years <- seq(start_year, end_year)
   }
   
   # create URL to US Treasury website for current month if current month is set to TRUE
@@ -61,7 +60,7 @@ yield_scraper <- function(){
     
     # fill yields df with data (with bug fix for first day of the month)
     if (rows > 1){
-      for (i in 0:rows-1){
+      for (i in 0:(rows-1)){
         yields[i+1,] <- yield_data[(12*i)+1:(12*(i+1))]
       } 
     } else {
