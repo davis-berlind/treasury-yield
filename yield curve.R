@@ -2,8 +2,6 @@ library(rvest)
 library(plotly)
 library(lubridate)
 
-rm(list = ls())
-
 yield_scraper <- function(){
   
   # current month only?
