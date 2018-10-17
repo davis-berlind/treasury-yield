@@ -45,29 +45,27 @@ yield_scraper <- function(){
     # convert to text
     yield_data <- html_text(yield_data_html)
     
-    # initialize df of dates and yields
-    yields <- data.frame(matrix(nrow = 0, ncol = 12))
-    
     # creating names for yields df
     maturities_html <- html_nodes(content,'th')
     maturities <- html_text(maturities_html)
+    
+    # initialize df of dates and yields
+    yields <- data.frame(matrix(nrow = 0, ncol = length(maturities)))
+    
     names(yields) <- maturities
     
     # calculate number of rows for yields df
-    rows <- length(yield_data)/12
+    rows <- length(yield_data)/length(maturities)
     
     # fill yields df with data (with bug fix for first day of the month)
     if (rows > 1){
       for (i in 0:(rows-1)){
-        yields[i+1,] <- yield_data[(12*i)+1:(12*(i+1))]
+        yields[i+1,] <- yield_data[(length(maturities)*i)+1:(length(maturities)*(i+1))]
       } 
     } else {
       yields[1,] <- yield_data
     }  
   } else {
-    
-    # initialize yields df
-    yields <- data.frame(matrix(nrow = 0, ncol = 12))
     
     # scrape names names for yields df
     url <- paste0("https://www.treasury.gov/resource-center/data-chart-center/interest-rates/Pages/TextView.aspx?data=yieldYear&year=",years[1])
@@ -75,6 +73,9 @@ yield_scraper <- function(){
     content <- read_html("scrapedpage.html")
     maturities_html <- html_nodes(content,'th')
     maturities <- html_text(maturities_html)
+    
+    # initialize yields df
+    yields <- data.frame(matrix(nrow = 0, ncol = length(maturities)))
     names(yields) <- maturities
     
     # scrape yield data for each year in "years"
@@ -94,14 +95,14 @@ yield_scraper <- function(){
       yield_data <- html_text(yield_data_html)
       
       # save yields and dates to df for year i in years
-      yields_temp <- data.frame(matrix(nrow = 0, ncol = 12))
+      yields_temp <- data.frame(matrix(nrow = 0, ncol = length(maturities)))
       
       # calculate number of rows for year i yields df
-      rows <- length(yield_data)/12
+      rows <- length(yield_data)/length(maturities)
       
       # fill year i yields df with data
       for (j in 0:(rows-1)){
-        yields_temp[j+1,] <- yield_data[(12*j)+1:(12*(j+1))]
+        yields_temp[j+1,] <- yield_data[(length(maturities)*j)+1:(length(maturities)*(j+1))]
       } 
       
       # rename year i yields df
