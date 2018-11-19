@@ -7,8 +7,8 @@ yield_scraper <- function(){
   # current month only?
   current_month <- readline(prompt = "Current month only? (y/n): ")
   
-  if (current_month != "y" & current_month != "n"){
-    current_month <- ifelse(readline(prompt = 'please only enter "y" or "n": ') == "y", TRUE, FALSE)
+  while (current_month != "y" & current_month != "n"){
+    current_month <- readline(prompt = 'please only enter "y" or "n": ')
   }
   
   current_month <- ifelse(current_month == "y", TRUE, FALSE)
@@ -18,13 +18,13 @@ yield_scraper <- function(){
     
     start_year <- as.numeric(readline(prompt = paste0("Enter a start year between 1990 and ", year(Sys.Date()), ": ")))
       
-    if (is.na(start_year) | start_year < 1990 | start_year > year(Sys.Date())){
+    while (is.na(start_year) | start_year < 1990 | start_year > year(Sys.Date())){
       start_year <- as.numeric(readline(prompt = paste0("Only enter years between 1990 and ", year(Sys.Date()), ": ")))
       } 
       
     end_year <- as.numeric(readline(prompt = paste0("Enter an end year between ", start_year, " and ", format(Sys.Date(), format = "%Y"), ": ")))
       
-    if (is.na(end_year) | end_year < start_year | end_year > year(Sys.Date())){
+    while (is.na(end_year) | end_year < start_year | end_year > year(Sys.Date())){
       end_year <- as.numeric(readline(prompt = paste0("Only enter years between ", start_year, " and ", format(Sys.Date(), format = "%Y"), ": ")))
       } 
       
@@ -132,8 +132,9 @@ yield_scraper <- function(){
   plot_dim <- readline(prompt = "3D or 2D Plot? (enter 3D or 2D): ")
   plot_dim <- toupper(plot_dim)
   
-  if (plot_dim != "3D" & plot_dim != "2D"){
+  while (plot_dim != "3D" & plot_dim != "2D"){
     plot_dim <- readline(prompt = 'Only enter "3D" or "2D": ')
+    plot_dim <- toupper(plot_dim)
   }
   
   plot_title <- ""
