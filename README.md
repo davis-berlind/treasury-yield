@@ -1,6 +1,6 @@
 # treasury-yield R Shiny App
-## Davis Berlind
-### June 22, 2020
+Davis Berlind
+June 22, 2020
 ------
 
 This repository contains an `R` Shiny application that allows the user to scrape Daily Treasury Yield Curve Rates from [https://www.treasury.gov/](https://www.treasury.gov/) and plot these rates as a 3D surface to examine changes in the yield curve over time. 
@@ -11,7 +11,7 @@ First, you will need Shiny to be installed.
 install.packages("shiny")
 ```
 
-This application also relies on the `{r} rvest` package for webscraping, `{r} dplyr` for data cleaning, and `{r} plotly` for plotting interactive plots.
+This application also relies on the `rvest` package for webscraping, `dplyr` for data cleaning, and `plotly` for plotting interactive plots.
 
 ```{r eval=FALSE}
 install.packages(c("rvest", "dplyr", "plotly"))
@@ -31,4 +31,4 @@ library(shiny)
 runGitHub("treasury-yield", "davis-berlind")
 ```
 
-There are also two helper scripts in this repo. `yield_scraper.R` is the main webscraping routine and will return a `{r} data.frame` of daily yield curve rates and `yield_plot.R` contains the 3D plotting code. 
+There are also two helper scripts in this repo. `yield_scraper.R` is the main webscraping routine and will return a `data.frame` of daily yield curve rates and `yield_plot.R` contains the 3D plotting code. 
