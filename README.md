@@ -1,6 +1,6 @@
 # treasury-yield R Shiny App
-Davis Berlind
-June 22, 2020
+### Davis Berlind
+### June 22, 2020
 ------
 
 This repository contains an `R` Shiny application that allows the user to scrape Daily Treasury Yield Curve Rates from [https://www.treasury.gov/](https://www.treasury.gov/) and plot these rates as a 3D surface to examine changes in the yield curve over time. 
