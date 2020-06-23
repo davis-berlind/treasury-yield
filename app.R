@@ -19,7 +19,7 @@ ui <- fluidPage(
                      start = min(yield_data$Date), end = max(yield_data$Date),
                      min = min(yield_data$Date), max = max(yield_data$Date)),
       sliderInput("slider", label = "Width:",
-                  min = 1, max = 10, value = 4)
+                  min = 1, max = 10, value = 3)
     ),
     mainPanel(
       plotlyOutput("yield_curve")
