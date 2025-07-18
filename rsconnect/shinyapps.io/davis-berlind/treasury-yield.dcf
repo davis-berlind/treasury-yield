@@ -5,6 +5,7 @@ account: davis-berlind
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2490553
-bundleId: 3305559
+bundleId: 10636014
 url: https://davis-berlind.shinyapps.io/treasury-yield/
-when: 1592902229.48133
+asMultiple: FALSE
+asStatic: FALSE
