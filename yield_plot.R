@@ -1,31 +1,33 @@
 yield_plot <- function(start, stop, aspect, yield_data) {
   plot_data <- filter(yield_data, Date <= stop & Date >= start)
+  plot_data <- plot_data[!apply(plot_data[,-1], 1, function(x) all(is.na(x))),] %>%
+    select(where(~ all(!is.na(.))))
   x <- plot_data$Date
   y <- names(plot_data)[!grepl("Date", names(plot_data))]
-  z <- plot_data %>% 
-    select(-Date) %>% 
-    as.matrix() %>% 
+  z <- plot_data %>%
+    select(-Date) %>%
+    as.matrix() %>%
     t()
-  
+
   plot_ly(x = x, y = y, z = z, type = "surface",
-          opacity = 0.9) %>% 
-    layout(title = paste("Daily Treasury Yield Curve Rates from\n", 
-                         format(start, format = "%B %d, %Y"), 
-                         "to", 
+          opacity = 0.9) %>%
+    layout(title = paste("Daily Treasury Yield Curve Rates from\n",
+                         format(start, format = "%B %d, %Y"),
+                         "to",
                          format(stop, format = "%B %d, %Y")),
-           scene = list(xaxis = list(title = 'Date', 
+           scene = list(xaxis = list(title = 'Date',
                                      titlefont = list(size = 15),
                                      tickfont = list(size = 12),
                                      backgroundcolor = "#FFFFFF",
                                      gridcolor = "#000000",
                                      showbackground = TRUE),
-                        yaxis = list(title = 'Maturity', 
+                        yaxis = list(title = 'Maturity',
                                      titlefont = list(size = 15),
                                      tickfont = list(size = 12),
                                      backgroundcolor = "#FFFFFF",
                                      gridcolor = "#000000",
                                      showbackground = TRUE),
-                        zaxis = list(title = 'Yield (%)', 
+                        zaxis = list(title = 'Yield (%)',
                                      titlefont = list(size = 15),
                                      tickfont = list(size = 12),
                                      backgroundcolor = "#FFFFFF",
