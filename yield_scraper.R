@@ -49,7 +49,8 @@ yield_scraper <- function(){
       rename_all(~gsub("\\.([A-Z])", " \\1", .)) %>%
       mutate(Date = as.Date(Date, format = "%m/%d/%Y")) %>%
       arrange(Date)
-
+    
+    all_cols <- union(names(yield), names(yield_new))
     all_cols <- c("Date",
                   all_cols[grepl("Mo",all_cols)][order(as.numeric(gsub(" Mo", "", all_cols[grepl("Mo",all_cols)])))],
                   all_cols[grepl("Yr",all_cols)][order(as.numeric(gsub(" Yr", "", all_cols[grepl("Yr",all_cols)])))])
